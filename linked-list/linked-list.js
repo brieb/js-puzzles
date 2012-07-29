@@ -1,10 +1,3 @@
-var linkedListNode = function(key) {
-  return {
-    key: key,
-    next: null
-  };
-};
-
 var linkedList = function() {
   var head = null;
 
@@ -71,3 +64,5 @@ var linkedList = function() {
     getNodeKeys: getNodeKeys
   };
 };
+
+exports.linkedList = linkedList;

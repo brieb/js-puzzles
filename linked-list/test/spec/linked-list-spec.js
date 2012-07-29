@@ -1,3 +1,6 @@
+var linkedList = require('../../linked-list.js').linkedList;
+var linkedListNode = require('../../linked-list-node.js').linkedListNode;
+
 describe('Linked List', function(){
   var list;
 
