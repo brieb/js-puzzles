@@ -2,13 +2,13 @@ describe('Linked List', function(){
   var list;
 
   var insertNewNode = function(list, key){
-    var n = linkedListNode(key);
+    var n = new linkedListNode(key);
     list.insert(n);
     return n;
   };
 
   beforeEach(function(){
-    list = linkedList();
+    list = new linkedList();
   });
 
   it('can insert a node', function(){
@@ -143,5 +143,22 @@ describe('Linked List', function(){
 
     var result = list.search(4);
     expect(result).toBeNull();
+  });
+
+  it('correctly gets node keys', function(){
+    var nodeA = insertNewNode(list, 1);
+    var nodeB = insertNewNode(list, 2);
+    var nodeC = insertNewNode(list, 3);
+
+    expect(list.getNodeKeys()).toEqual([3,2,1]);
+  });
+
+  it('correctly reverses the list', function(){
+    var nodeA = insertNewNode(list, 1);
+    var nodeB = insertNewNode(list, 2);
+    var nodeC = insertNewNode(list, 3);
+
+    list.reverse();
+    expect(list.getNodeKeys()).toEqual([1,2,3]);
   });
 });
