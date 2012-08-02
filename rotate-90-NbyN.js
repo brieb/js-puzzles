@@ -1,3 +1,5 @@
+var _s = require('underscore.string');
+
 var m = [
   [1,2,3],
   [4,5,6],
@@ -19,14 +21,24 @@ var m = [
   [21,22,23,24,25]
 ];
 
+var m = [
+  [1,2,3,4,5,6],
+  [7,8,9,10,11,12],
+  [12,13,14,15,16,17],
+  [18,19,20,21,22,23],
+  [24,25,26,27,28,30],
+  [31,32,33,34,35,36]
+];
+
 function printMatrix(m) {
   for (var i=0; i < m.length; i++) {
     var row = '';
     for (var j=0; j < m[i].length; j++) {
-      row += m[i][j] + ' ';
+      row += _s.sprintf("%2d ", m[i][j]);
     };
     console.log(row);
   };
+  console.log('');
 }
 
 function rotateMatrix(m) {
@@ -42,7 +54,7 @@ function rotateMatrix(m) {
       x = minX;
       tmp = m[x][y];
       m[x][y] = m[x+(n-i)][y-i];
-      m[x+(n-i)][y-i] = m[]
+      // m[x+(n-i)][y-i] = m[]
 
       x += i;
       y += n - i;
@@ -70,5 +82,22 @@ function rotateMatrix(m) {
   printMatrix(m);
 }
 
+function rotate(m, start, last) {
+  if (start >= last)
+    return;
+
+  for (var i = start; i < last; i++) {
+    var offset = last - start - i;
+    var cur = m[i][start];
+    m[i][start] = m[start][start + offset];
+    m[start][start + offset] = m[start + offset][last];
+    m[start + offset][last] = m[last][start + i];
+    m[last][start + i] = cur;
+  }
+  rotate(m, start+1, last-1);
+}
+
 printMatrix(m);
-rotateMatrix(m);
+// rotateMatrix(m);
+rotate(m, 0, m.length-1);
+printMatrix(m);
