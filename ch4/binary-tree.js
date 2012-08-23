@@ -117,6 +117,46 @@ BinaryTree.prototype = (function() {
 
   }
 
+  function isBalanced() {
+    var minFromRoot = null;
+    var maxFromRoot = null;
+
+    var leaves = [];
+    _getLeaves(this.root, 0, leaves);
+
+    for (var i = 0; i < leaves.length; i++) {
+      var leaf = leaves[i];
+
+      if (minFromRoot === null || leaf.depth < minFromRoot) {
+        minFromRoot = leaf.depth;
+      }
+      if (maxFromRoot === null || leaf.depth > maxFromRoot) {
+        maxFromRoot = leaf.depth;
+      }
+
+      if (maxFromRoot - minFromRoot > 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function _getLeaves(root, depth, leaves) {
+    if (root === null) return;
+
+    if (_isLeaf(root)) {
+      leaves.push({ node: root, depth: depth });
+      return;
+    }
+
+    _getLeaves(root.left, depth + 1, leaves);
+    _getLeaves(root.right, depth + 1, leaves);
+  }
+
+  function _isLeaf(node) {
+    return node.left === null && node.right === null;
+  }
+
   return {
     setRoot: setRoot,
     print: print,
@@ -125,7 +165,8 @@ BinaryTree.prototype = (function() {
     printPostOrder: printPostOrder,
     find: find,
     remove: remove,
-    insert: insert
+    insert: insert,
+    isBalanced: isBalanced
   };
 
 })();
@@ -149,11 +190,11 @@ var nH = new Node("H");
 // nC.right = nG;
 // nG.right = nH;
 
-bt.root = nE;
-bt.insert(nB);
-bt.insert(nG);
+bt.root = nB;
 bt.insert(nA);
+bt.insert(nD);
 bt.insert(nC);
-bt.insert(nH);
+bt.insert(nE);
+bt.insert(nF);
 
-bt.print();
+console.log(bt.isBalanced());
