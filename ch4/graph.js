@@ -68,15 +68,23 @@ Graph.prototype = (function() {
   }
 
   function bfs(nodeID) {
+    return _bfsHelper.call(this, this.root, nodeID);
+  }
+
+  function _bfsHelper(root, nodeID) {
     var visited = {};
     var queue = new Queue();
-    queue.enqueue(this.root);
-    visited[this.root.id] = true;
+    queue.enqueue(root);
+    visited[root.id] = true;
 
     while (!queue.isEmpty()) {
       var cur = queue.dequeue();
-      if (cur.id === nodeID) return cur;
-      for (var i=0; i < this.adjList[cur.id].length; i++) {
+
+      if (cur.id === nodeID) {
+        return cur;
+      }
+
+      for (var i = 0; i < this.adjList[cur.id].length; i++) {
         var child = this.adjList[cur.id][i];
         if (!visited[child.id]) {
           queue.enqueue(child);
@@ -88,11 +96,16 @@ Graph.prototype = (function() {
     return null;
   }
 
+  function existsRouteBetween(node1, node2) {
+    return _bfsHelper.call(this, node1, node2.id) !== null;
+  }
+
   return {
     addEdge: addEdge,
     print: print,
     dfs: dfs,
-    bfs: bfs
+    bfs: bfs,
+    existsRouteBetween: existsRouteBetween
   };
 })();
 
@@ -114,7 +127,8 @@ graph.addEdge([n5, n6]);
 graph.addEdge([n6, n7]);
 graph.addEdge([n3, n8]);
 graph.addEdge([n3, n9]);
+graph.addEdge([n7, n2]);
 graph.print();
 
-var found = graph.bfs(8);
+var found = graph.existsRouteBetween(n4, n9);
 console.log(found);
