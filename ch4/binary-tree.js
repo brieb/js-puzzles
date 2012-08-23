@@ -47,6 +47,46 @@ BinaryTree.prototype = (function() {
     console.log(node.value);
   }
 
+  function print() {
+    printHelper([this.root]);
+  }
+
+  function printHelper(nodes) {
+    var hasNode = false;
+    var values = [];
+    var realNodes = [];
+    for (var i=0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (typeof node === 'string') {
+        values.push(node);
+      } else {
+        values.push(node.value);
+        hasNode = true;
+        realNodes.push(node);
+      }
+    };
+    console.log(values);
+
+    if (!hasNode) return;
+
+    var newNodes = [];
+    for (var i=0; i < realNodes.length; i++) {
+      var node = realNodes[i];
+      if (node.left) {
+        newNodes.push(node.left);
+        newNodes.push('/');
+      }
+      if (node.right) {
+        newNodes.push("\\");
+        newNodes.push(node.right);
+      }
+      if (i !== realNodes.length - 1) {
+        newNodes.push(' ');
+      }
+    };
+    printHelper(newNodes);
+  }
+
   function find(nodeID) {
 
   }
@@ -55,17 +95,37 @@ BinaryTree.prototype = (function() {
 
   }
 
-  function insert(value) {
+  function insert(node) {
+    if (this.root === null)
+      this.root = node;
+    else
+      insertHelper(node, this.root);
+  }
+
+  function insertHelper(node, root) {
+    if (node.value < root.value) {
+      if (root.left === null)
+        root.left = node;
+      else
+        insertHelper(node, root.left);
+    } else if (node.value > root.value) {
+      if (root.right === null)
+        root.right = node;
+      else
+        insertHelper(node, root.right);
+    }
 
   }
 
   return {
     setRoot: setRoot,
+    print: print,
     printInOrder: printInOrder,
     printPreOrder: printPreOrder,
     printPostOrder: printPostOrder,
     find: find,
-    remove: remove
+    remove: remove,
+    insert: insert
   };
 
 })();
@@ -81,19 +141,19 @@ var nF = new Node("F");
 var nG = new Node("G");
 var nH = new Node("H");
 
-nA.left = nB;
-nA.right = nC;
-nB.left = nD;
-nB.right = nE;
-nE.right = nF;
-nC.right = nG;
-nG.right = nH;
+// nA.left = nB;
+// nA.right = nC;
+// nB.left = nD;
+// nB.right = nE;
+// nE.right = nF;
+// nC.right = nG;
+// nG.right = nH;
 
-bt.root = nA;
+bt.root = nE;
+bt.insert(nB);
+bt.insert(nG);
+bt.insert(nA);
+bt.insert(nC);
+bt.insert(nH);
 
-console.log("IN");
-bt.printInOrder();
-console.log("PRE");
-bt.printPreOrder();
-console.log("POST");
-bt.printPostOrder();
+bt.print();
