@@ -15,43 +15,43 @@ BinaryTree.prototype = (function() {
   }
 
   function printInOrder() {
-    printInOrderHelper(this.root);
+    _printInOrderHelper(this.root);
   }
 
-  function printInOrderHelper(node) {
+  function _printInOrderHelper(node) {
     if (node === null) return;
-    printInOrderHelper(node.left);
+    _printInOrderHelper(node.left);
     console.log(node.value);
-    printInOrderHelper(node.right);
+    _printInOrderHelper(node.right);
   }
 
   function printPreOrder() {
-    printPreOrderHelper(this.root);
+    _printPreOrderHelper(this.root);
   }
 
-  function printPreOrderHelper(node) {
+  function _printPreOrderHelper(node) {
     if (node === null) return;
     console.log(node.value);
-    printPreOrderHelper(node.left);
-    printPreOrderHelper(node.right);
+    _printPreOrderHelper(node.left);
+    _printPreOrderHelper(node.right);
   }
 
   function printPostOrder() {
-    printPostOrderHelper(this.root);
+    _printPostOrderHelper(this.root);
   }
 
-  function printPostOrderHelper(node) {
+  function _printPostOrderHelper(node) {
     if (node === null) return;
-    printPostOrderHelper(node.left);
-    printPostOrderHelper(node.right);
+    _printPostOrderHelper(node.left);
+    _printPostOrderHelper(node.right);
     console.log(node.value);
   }
 
   function print() {
-    printHelper([this.root]);
+    _printHelper([this.root]);
   }
 
-  function printHelper(nodes) {
+  function _printHelper(nodes) {
     var hasNode = false;
     var values = [];
     var realNodes = [];
@@ -84,7 +84,7 @@ BinaryTree.prototype = (function() {
         newNodes.push(' ');
       }
     };
-    printHelper(newNodes);
+    _printHelper(newNodes);
   }
 
   function find(nodeID) {
@@ -99,20 +99,20 @@ BinaryTree.prototype = (function() {
     if (this.root === null)
       this.root = node;
     else
-      insertHelper(node, this.root);
+      _insertHelper(node, this.root);
   }
 
-  function insertHelper(node, root) {
+  function _insertHelper(node, root) {
     if (node.value < root.value) {
       if (root.left === null)
         root.left = node;
       else
-        insertHelper(node, root.left);
+        _insertHelper(node, root.left);
     } else if (node.value > root.value) {
       if (root.right === null)
         root.right = node;
       else
-        insertHelper(node, root.right);
+        _insertHelper(node, root.right);
     }
 
   }
