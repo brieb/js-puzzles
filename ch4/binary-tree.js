@@ -47,9 +47,9 @@ BinaryTree.prototype = (function() {
     console.log(node.value);
   }
 
-  function print() {
-    _printHelper([this.root]);
-  }
+  // function print() {
+  //   _printHelper([this.root]);
+  // }
 
   function _printHelper(nodes) {
     var hasNode = false;
@@ -157,6 +157,94 @@ BinaryTree.prototype = (function() {
     return node.left === null && node.right === null;
   }
 
+  function createFromSortedArray(sortedArray) {
+    this.root = _createFromSortedArray(sortedArray);
+  }
+
+  function _createFromSortedArray(sortedArray) {
+    if (sortedArray.length === 0) {
+      return null;
+    }
+    if (sortedArray.length === 1) {
+      return new Node(sortedArray[0]);
+    }
+
+    var mid = Math.floor(sortedArray.length / 2);
+    var root = new Node(sortedArray[mid]);
+    root.left = _createFromSortedArray(sortedArray.slice(0, mid));
+    root.right = _createFromSortedArray(sortedArray.slice(mid+1));
+    return root;
+  }
+
+  function print() {
+    var depth = _getDepth.call(this) + 1;
+    var breadth = Math.pow(2, depth) - 1;
+
+    var grid = [];
+    for (var x = 0; x < breadth; x++) {
+      grid[x] = [];
+      for (var y = 0; y < depth; y++) {
+        grid[x][y] = ' ';
+      }
+    }
+
+    _assignCoordinates(grid, 0, breadth, depth - 1, this.root);
+
+    for (var y = grid[0].length - 1; y >= 0; y--) {
+      var rowStr = '';
+      var branchRowStr = '';
+      for (var x = grid.length - 1; x >= 0; x--) {
+        branchRowStr += ' ';
+      }
+      for (var x = grid.length - 1; x >= 0; x--) {
+        rowStr += grid[x][y];
+        if (grid[x][y] !== ' ') {
+          branchRowStr = branchRowStr.substring(0, x-1) +
+            '/' + '\\' + branchRowStr.substring(x+1);
+        }
+      }
+      console.log(rowStr);
+      console.log(branchRowStr);
+    }
+  }
+
+  function _getDepth() {
+    var maxFromRoot = null;
+
+    var leaves = [];
+    _getLeaves(this.root, 0, leaves);
+
+    for (var i = 0; i < leaves.length; i++) {
+      var leaf = leaves[i];
+
+      if (maxFromRoot === null || leaf.depth > maxFromRoot) {
+        maxFromRoot = leaf.depth;
+      }
+    }
+
+    return maxFromRoot;
+  }
+
+  // TODO
+  // function _initGrid
+
+  function _assignCoordinates(grid, minX, maxX, y, root) {
+    if (minX === maxX)
+      return;
+
+    var midX = Math.floor((maxX + minX)/2);
+    grid[midX][y] = root.value;
+    _assignCoordinates(grid, minX, midX, y - 1, root.left);
+    _assignCoordinates(grid, midX + 1, maxX, y - 1, root.right);
+  }
+
+  // function _numLeaves() {
+  //   var leaves = [];
+  //   _getLeaves(this.root, 0, leaves);
+  //   return leaves.length;
+  // }
+
+
   return {
     setRoot: setRoot,
     print: print,
@@ -166,7 +254,8 @@ BinaryTree.prototype = (function() {
     find: find,
     remove: remove,
     insert: insert,
-    isBalanced: isBalanced
+    isBalanced: isBalanced,
+    createFromSortedArray: createFromSortedArray
   };
 
 })();
@@ -190,11 +279,14 @@ var nH = new Node("H");
 // nC.right = nG;
 // nG.right = nH;
 
-bt.root = nB;
-bt.insert(nA);
-bt.insert(nD);
-bt.insert(nC);
-bt.insert(nE);
-bt.insert(nF);
+// bt.root = nB;
+// bt.insert(nA);
+// bt.insert(nD);
+// bt.insert(nC);
+// bt.insert(nE);
+// bt.insert(nF);
 
-console.log(bt.isBalanced());
+// console.log(bt.isBalanced());
+
+bt.createFromSortedArray([1,2,3,4,5,6,7]);
+bt.print();
