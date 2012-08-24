@@ -179,24 +179,11 @@ BinaryTree.prototype = (function() {
   function print() {
     var depth = _getDepth.call(this) + 1;
     var breadth = Math.pow(2, depth) - 1;
+    var depthWithBranches = depth * 2 - 1;
 
-    var grid = [];
-    for (var x = 0; x < breadth; x++) {
-      grid[x] = [];
-      for (var y = 0; y < depth; y++) {
-        grid[x][y] = ' ';
-      }
-    }
-
-    _assignCoordinates(grid, 0, breadth, depth - 1, this.root);
-
-    for (var y = grid[0].length - 1; y >= 0; y--) {
-      var rowStr = '';
-      for (var x = grid.length - 1; x >= 0; x--) {
-        rowStr += grid[x][y];
-      }
-      console.log(rowStr);
-    }
+    var grid = _initGrid(breadth, depthWithBranches);
+    _assignCoordinates(grid, 0, breadth, depthWithBranches - 1, this.root);
+    _printGrid.call(this, grid);
   }
 
   function _getDepth() {
@@ -216,25 +203,102 @@ BinaryTree.prototype = (function() {
     return maxFromRoot;
   }
 
-  // TODO
-  // function _initGrid
+  function _initGrid(maxX, maxY) {
+    var grid = [];
+    for (var x = 0; x < maxX; x++) {
+      grid[x] = [];
+      for (var y = 0; y < maxY; y++) {
+        grid[x][y] = ' ';
+      }
+    }
+    return grid;
+  }
 
   function _assignCoordinates(grid, minX, maxX, y, root) {
     if (minX === maxX)
       return;
 
     var midX = Math.floor((maxX + minX)/2);
-    grid[midX][y] = root.value;
-    _assignCoordinates(grid, minX, midX, y - 1, root.left);
-    _assignCoordinates(grid, midX + 1, maxX, y - 1, root.right);
+    grid[midX][y] = root ? root.value : 'X';
+
+    if (y > 0) {
+      var q1X = Math.floor((maxX - minX) / 4) + minX;
+      var q2X = Math.floor((maxX - minX) * 3/4) + minX;
+      var branchLeftX = Math.floor((midX + q1X) / 2);
+      var branchRightX = Math.floor((midX + q2X) / 2);
+      grid[branchLeftX][y - 1] = '/';
+      grid[branchRightX][y - 1] = '\\';
+    }
+
+    if (root === null) return;
+
+    _assignCoordinates(grid, minX, midX, y - 2, root.left);
+    _assignCoordinates(grid, midX + 1, maxX, y - 2, root.right);
   }
 
-  // function _numLeaves() {
-  //   var leaves = [];
-  //   _getLeaves(this.root, 0, leaves);
-  //   return leaves.length;
-  // }
+  function _printGrid(grid) {
+    var maxNodeValueLength = _getLongestNodeValue(this.root);
+    for (var y = grid[0].length - 1; y >= 0; y--) {
+      var rowStr = '';
+      for (var x = 0; x < grid.length; x++) {
+        var cur = grid[x][y];
+        var str = '';
+        if (typeof cur === 'string') {
+          str = cur;
+        } else if (typeof cur === 'number') {
+          str = cur.toString();
+        }
 
+        var padSide = cur === '/' || cur === '\\' ? 'left' : 'both';
+        rowStr += _padStr(str, maxNodeValueLength, padSide);
+      }
+      console.log(rowStr);
+    }
+  }
+
+  function _getLongestNodeValue(root) {
+    if (root === null)
+      return 0;
+
+    if (_isLeaf(root))
+      return root.value.toString().length;
+
+    return Math.max(
+        root.value.toString().length,
+        _getLongestNodeValue(root.left),
+        _getLongestNodeValue(root.right)
+      );
+  }
+
+  function _padStr(str, goalLength, side) {
+    var lengthDelta = goalLength - str.length;
+    var numLeft = 0, numRight = 0;
+    var padLeft = '', padRight = '';
+
+    if (side === 'left') {
+      numLeft = lengthDelta;
+    } else if (side === 'right') {
+      numRight = lengthDelta;
+    } else {
+      numLeft = Math.ceil(lengthDelta/2);
+      numRight = Math.floor(lengthDelta/2);
+    }
+
+    for (var i = 0; i < numLeft; i++) {
+      padLeft += ' ';
+    }
+    for (var i = 0; i < numRight; i++) {
+      padRight += ' ';
+    }
+
+    return padLeft + str + padRight;
+  }
+
+  function _numLeaves() {
+    var leaves = [];
+    _getLeaves(this.root, 0, leaves);
+    return leaves.length;
+  }
 
   return {
     setRoot: setRoot,
@@ -279,5 +343,5 @@ var nH = new Node("H");
 
 // console.log(bt.isBalanced());
 
-bt.createFromSortedArray([1,2,3,4,5,6,7]);
+bt.createFromSortedArray([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,11111]);
 bt.print();
