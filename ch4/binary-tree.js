@@ -192,19 +192,10 @@ BinaryTree.prototype = (function() {
 
     for (var y = grid[0].length - 1; y >= 0; y--) {
       var rowStr = '';
-      var branchRowStr = '';
-      for (var x = grid.length - 1; x >= 0; x--) {
-        branchRowStr += ' ';
-      }
       for (var x = grid.length - 1; x >= 0; x--) {
         rowStr += grid[x][y];
-        if (grid[x][y] !== ' ') {
-          branchRowStr = branchRowStr.substring(0, x-1) +
-            '/' + '\\' + branchRowStr.substring(x+1);
-        }
       }
       console.log(rowStr);
-      console.log(branchRowStr);
     }
   }
 
