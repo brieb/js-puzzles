@@ -1,11 +1,7 @@
-function Node(value) {
-  this.value = value;
-  this.left = null;
-  this.right = null;
-}
+var Queue = require('../data-structures/queue');
+var Node = require('./binary-tree-node');
 
-
-function BinaryTree() {
+var BinaryTree = function() {
   this.root = null;
 }
 
@@ -114,7 +110,6 @@ BinaryTree.prototype = (function() {
       else
         _insertHelper(node, root.right);
     }
-
   }
 
   function isBalanced() {
@@ -173,6 +168,12 @@ BinaryTree.prototype = (function() {
     var root = new Node(sortedArray[mid]);
     root.left = _createFromSortedArray(sortedArray.slice(0, mid));
     root.right = _createFromSortedArray(sortedArray.slice(mid+1));
+    if (root.left) {
+      root.left.parent = root;
+    }
+    if (root.right) {
+      root.right.parent = root;
+    }
     return root;
   }
 
@@ -300,6 +301,86 @@ BinaryTree.prototype = (function() {
     return leaves.length;
   }
 
+  function toLinkedListsByDepth() {
+    var lists = [];
+    _toLinkedListsByDepth(lists, 0, this.root);
+    return lists;
+  }
+
+  function _toLinkedListsByDepth(lists, depth, root) {
+    if (root === null)
+      return;
+
+    _appendToList(lists, depth, root);
+    _toLinkedListsByDepth(lists, depth + 1, root.left);
+    _toLinkedListsByDepth(lists, depth + 1, root.right);
+  }
+
+  function _appendToList(lists, index, node) {
+    lists[index] = {
+      node: node,
+      next: lists[index] || null
+    };
+  }
+
+  function toLinkedListsByDepthBFS() {
+    var depth = 0;
+    var linkedLists = [];
+    var queue = new Queue();
+    queue.enqueue(depth);
+    queue.enqueue(this.root);
+
+    while (!queue.isEmpty()) {
+      var cur = queue.dequeue();
+      if (typeof cur === 'number') {
+        depth = cur;
+      } else if (cur !== null) {
+        linkedLists[depth] = {
+          node: cur,
+          next: linkedLists[depth] || null
+        };
+
+        queue.enqueue(depth + 1);
+        queue.enqueue(cur.left);
+        queue.enqueue(cur.right);
+      }
+    }
+
+    return linkedLists;
+  }
+
+  function getInOrderSuccessor(node) {
+    if (node.right === null) {
+      if (node.parent === null) {
+        return null;
+      } else if (node.parent.left === node) {
+        return node.parent;
+      } else if (node.parent.right === node) {
+        return _getRightChildsParentLeft(node);
+      }
+    } else {
+      return _getLeftmostNode(node.right);
+    }
+  }
+
+  function _getRightChildsParentLeft(node) {
+    var cur = node.parent;
+    var curParent = node.parent.parent;
+    while (curParent && curParent.left !== cur) {
+      curParent = curParent.parent;
+      cur = cur.parent;
+    }
+    return curParent;
+  }
+
+  function _getLeftmostNode(node) {
+    var cur = node;
+    while (cur.left !== null) {
+      cur = cur.left;
+    }
+    return cur;
+  }
+
   return {
     setRoot: setRoot,
     print: print,
@@ -310,38 +391,13 @@ BinaryTree.prototype = (function() {
     remove: remove,
     insert: insert,
     isBalanced: isBalanced,
-    createFromSortedArray: createFromSortedArray
+    createFromSortedArray: createFromSortedArray,
+    toLinkedListsByDepth: toLinkedListsByDepth,
+    toLinkedListsByDepthBFS: toLinkedListsByDepthBFS,
+    getInOrderSuccessor: getInOrderSuccessor
   };
 
 })();
 
-var bt = new BinaryTree();
+module.exports = BinaryTree;
 
-var nA = new Node("A");
-var nB = new Node("B");
-var nC = new Node("C");
-var nD = new Node("D");
-var nE = new Node("E");
-var nF = new Node("F");
-var nG = new Node("G");
-var nH = new Node("H");
-
-// nA.left = nB;
-// nA.right = nC;
-// nB.left = nD;
-// nB.right = nE;
-// nE.right = nF;
-// nC.right = nG;
-// nG.right = nH;
-
-// bt.root = nB;
-// bt.insert(nA);
-// bt.insert(nD);
-// bt.insert(nC);
-// bt.insert(nE);
-// bt.insert(nF);
-
-// console.log(bt.isBalanced());
-
-bt.createFromSortedArray([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,11111]);
-bt.print();
