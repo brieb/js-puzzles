@@ -381,6 +381,43 @@ BinaryTree.prototype = (function() {
     return cur;
   }
 
+  function findCommonAncestor(node1, node2) {
+    var path1 = [], path2 = [];
+    _pathToNode(node1, this.root, path1);
+    _pathToNode(node2, this.root, path2);
+
+    var minLength = Math.min(path1.length, path2.length);
+    path1 = path1.slice(0, minLength);
+    path2 = path2.slice(0, minLength);
+
+    while (path1.length > 0 && path2.length > 0) {
+      var cur1 = path1.pop();
+      var cur2 = path2.pop();
+      if (cur1 === cur2) {
+        return cur1;
+      }
+    }
+    return null;
+  }
+
+  function _pathToNode(node, root, path) {
+    if (root === null) {
+      return false;
+    }
+    if (root === node) {
+      return true;
+    }
+
+    path.push(root);
+    var found = _pathToNode(node, root.left, path);
+    found = found || _pathToNode(node, root.right, path);
+    if (!found) {
+      path.pop();
+    }
+
+    return found;
+  }
+
   return {
     setRoot: setRoot,
     print: print,
@@ -394,7 +431,8 @@ BinaryTree.prototype = (function() {
     createFromSortedArray: createFromSortedArray,
     toLinkedListsByDepth: toLinkedListsByDepth,
     toLinkedListsByDepthBFS: toLinkedListsByDepthBFS,
-    getInOrderSuccessor: getInOrderSuccessor
+    getInOrderSuccessor: getInOrderSuccessor,
+    findCommonAncestor: findCommonAncestor
   };
 
 })();
