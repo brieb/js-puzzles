@@ -418,6 +418,53 @@ BinaryTree.prototype = (function() {
     return found;
   }
 
+  function findAllPathsWithSum(sum) {
+    var paths = [];
+    _findAllPaths(this.root, [ this.root ], paths);
+
+    var sumPaths = [];
+    for (var i = 0; i < paths.length; i++) {
+      var path = paths[i];
+      var pathSum = 0;
+      for (var j = path.length - 1; j >= 0; j--) {
+        pathSum += path[j].value;
+        if (pathSum === sum) {
+          sumPaths.push(path.slice(j));
+        }
+      }
+    }
+    return sumPaths;
+  }
+
+  function _findAllPaths(root, path, paths) {
+    if (root === null) {
+      return;
+    }
+
+    paths.push(path);
+
+    if (root.left !== null) {
+      var pathLeft = path.slice(0);
+      pathLeft.push(root.left);
+      _findAllPaths(root.left, pathLeft, paths);
+    }
+    if (root.right !== null) {
+      var pathRight = path.slice(0);
+      pathRight.push(root.right);
+      _findAllPaths(root.right, pathRight, paths);
+    }
+  }
+
+  function _printPathValues(path) {
+    var str = '[';
+    for (var i = 0; i < path.length; i++) {
+      var node = path[i];
+      str += node.value + ' ->';
+    }
+    str += ']';
+    console.log(str);
+  }
+
   return {
     setRoot: setRoot,
     print: print,
@@ -432,7 +479,8 @@ BinaryTree.prototype = (function() {
     toLinkedListsByDepth: toLinkedListsByDepth,
     toLinkedListsByDepthBFS: toLinkedListsByDepthBFS,
     getInOrderSuccessor: getInOrderSuccessor,
-    findCommonAncestor: findCommonAncestor
+    findCommonAncestor: findCommonAncestor,
+    findAllPathsWithSum: findAllPathsWithSum
   };
 
 })();
