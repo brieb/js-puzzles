@@ -401,12 +401,8 @@ BinaryTree.prototype = (function() {
   }
 
   function _pathToNode(node, root, path) {
-    if (root === null) {
-      return false;
-    }
-    if (root === node) {
-      return true;
-    }
+    if (root === null) return false;
+    if (root === node) return true;
 
     path.push(root);
     var found = _pathToNode(node, root.left, path);
@@ -437,9 +433,7 @@ BinaryTree.prototype = (function() {
   }
 
   function _findAllPaths(root, path, paths) {
-    if (root === null) {
-      return;
-    }
+    if (root === null) return;
 
     paths.push(path);
 
@@ -465,6 +459,25 @@ BinaryTree.prototype = (function() {
     console.log(str);
   }
 
+  function containsTree(tree) {
+    if (tree === null) return true;
+    return _containsTree(this.root, tree.root);
+  }
+
+  function _containsTree(root1, root2) {
+    if (root1 === null) return false;
+    if (root1.value === root2.value && _isTreeMatch(root1, root2)) return true;
+    return _containsTree(root1.left, root2) || _containsTree(root1.right, root2);
+  }
+
+  function _isTreeMatch(root1, root2) {
+    if (root1 === null && root2 === null) return true;
+    if (root1 === null || root2 === null) return false;
+    return root1.value === root2.value &&
+      _isTreeMatch(root1.left, root2.left) &&
+      _isTreeMatch(root1.right, root2.right);
+  }
+
   return {
     setRoot: setRoot,
     print: print,
@@ -480,7 +493,8 @@ BinaryTree.prototype = (function() {
     toLinkedListsByDepthBFS: toLinkedListsByDepthBFS,
     getInOrderSuccessor: getInOrderSuccessor,
     findCommonAncestor: findCommonAncestor,
-    findAllPathsWithSum: findAllPathsWithSum
+    findAllPathsWithSum: findAllPathsWithSum,
+    containsTree: containsTree
   };
 
 })();
