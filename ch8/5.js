@@ -1,28 +1,3 @@
-function parens1(numPairs) {
-  if (numPairs === 0) {
-    return [ '' ];
-  }
-  if (numPairs === 1) {
-    return [ '()' ];
-  }
-
-  var all = [];
-  for (var i = numPairs; i > 0; i--) {
-    var cur = '';
-    for (var j = 0; j < i; j++) {
-      cur += '(';
-    }
-    for (j = 0; j < i; j++) {
-      cur += ')';
-    }
-    var suffixes = parens(numPairs - i);
-    for (j = 0; j < suffixes.length; j++) {
-      all.push(cur + suffixes[j]);
-    }
-  }
-  return all;
-}
-
 function parens(numPairs) {
   return _parens(numPairs, numPairs, '');
 }
@@ -39,11 +14,55 @@ function _parens(left, right, str) {
   if (right > left) {
     results.push.apply(results, _parens(left, right - 1, str + ')'));
   }
-
   return results;
 }
 
-var p = parens(3);
+
+var knownPairs = {
+  0: [''],
+  1: ['()']
+};
+
+
+/**
+ * Num pairs: count(i) = count(i-1) - 1
+ */
+function parens2(numPairs) {
+  if (knownPairs[numPairs]) {
+    return knownPairs[numPairs];
+  }
+
+  var results = [];
+  var subPairs = parens2(numPairs - 1);
+  for (var i = 0; i < subPairs.length; i++) {
+    var pair = subPairs[i];
+    results.push.apply(results, _embrace(pair));
+    results.push.apply(results, _parallel(pair));
+  }
+  knownPairs[numPairs] = results;
+  return results;
+}
+
+function _embrace(str) {
+  return [ '(' + str + ')' ];
+}
+
+function _parallel(str) {
+  var onLeft = '()' + str;
+  var onRight = str + '()';
+  if (onLeft !== onRight) {
+    return [ onLeft, onRight ];
+  } else {
+    return [ onLeft ];
+  }
+}
+
+var p = parens(4);
 console.log(p.length, p);
-var p1 = parens1(3);
-console.log(p1.length, p1);
+
+var p2 = parens2(6);
+console.log(p2.length, p2, knownPairs);
+
+for (var pair in knownPairs) {
+  console.log(pair, knownPairs[pair].length);
+}
